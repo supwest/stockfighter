@@ -13,6 +13,7 @@ class StockfighterAPITest(unittest.TestCase):
 
 
     def test_trader_driver_is_firefox(self):
+        
         self.assertEqual(self.test_trader.driver.name, "firefox")
 
     def test_trader_checks_page_request_return_code(self):
@@ -26,6 +27,15 @@ class StockfighterAPITest(unittest.TestCase):
     def test_trader_checks_api_is_up(self):
         response = self.test_trader._check_api_status()        
         self.assertIn(response, [True, False])
+
+    def test_trader_logs_in(self):
+        self.test_trader._login()
+        self.assertEqual('https://www.stockfighter.io/ui/account', self.test_trader.driver.current_url)
+    
+    def test_trader_gets_trading_account(self):
+        #self.test_trader.driver.get('https://www.stockfighter.io')
+        #self.test_trader._login()
+        self.assertEquals(self.test_trader.account, "MSB81053722")
 
     def tearDown(self):
         self.test_trader.driver.close()
