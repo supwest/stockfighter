@@ -77,7 +77,8 @@ class Trader(object):
 
         
         #self.driver.get("https://www.stockfighter.io/")
-        #self._login()
+        #if self.driver.current_url != 'https://www.stockfighter.io/ui/account/':
+            #self._login()
         
         #print self.driver.current_url
         #chock_a_block = self.driver.find_element_by_xpath("//div[@class='panel-body']//ul[@class='list-group']//li[@class='list-group-item']//ul//li//b//a")
