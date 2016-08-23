@@ -33,8 +33,7 @@ class StockfighterAPITest(unittest.TestCase):
         self.assertEqual('https://www.stockfighter.io/ui/account', self.test_trader.driver.current_url)
     
     def test_trader_gets_trading_account(self):
-        #self.test_trader.driver.get('https://www.stockfighter.io')
-        #self.test_trader._login()
+        self.test_trader._get_trading_account("Chock A Block")
         self.assertEquals(self.test_trader.account, "MSB81053722")
 
     def tearDown(self):

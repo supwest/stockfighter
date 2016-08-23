@@ -1,8 +1,12 @@
 import os
+import sys
 import json
 import requests
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 
 
@@ -18,8 +22,9 @@ class Trader(object):
         self.api_key = os.environ['SF_API_KEY']
         self.main_url = 'https://www.stockfighter.io/'
         self.driver = webdriver.Firefox()
+        self.logged_in = False
         #self.driver.get(self.main_url)
-        self.account = self._get_trading_account()
+        self.account = None
 
     def _check_page_status(self, page):
         '''
@@ -60,6 +65,7 @@ class Trader(object):
         password.send_keys(os.environ['SF_PASSWORD'])
         button = self._get_login_submit_button()
         button.click()
+        self.logged_in = True
         
     def _get_login_submit_button(self):
         buttons = self.driver.find_elements_by_tag_name('button')
@@ -69,25 +75,27 @@ class Trader(object):
             else:
                 return None
 
-    def _get_trading_account(self):
+    def _get_trading_account(self, level_name):
         '''
         Need to wait unti the description pops up, then close it and get
         acct info
         '''
+        
+        if not self.logged_in:
+            self._login()
+        self._start_level(level_name)
+        try:
+            element = WebDriverWait(self.driver, 20).until( EC.visibility_of_element_located((By.XPATH, "//div[@class='modal-footer']//button")))
+            element.click()
+        except:
+            e = sys.exc_info()[0]
+        
+        strongs = self.driver.find_elements_by_css_selector("strong")
+        acct_num = strongs[2].text.split()[1]
+        self.account = acct_num
 
-        
-        #self.driver.get("https://www.stockfighter.io/")
-        #if self.driver.current_url != 'https://www.stockfighter.io/ui/account/':
-            #self._login()
-        
-        #print self.driver.current_url
-        #chock_a_block = self.driver.find_element_by_xpath("//div[@class='panel-body']//ul[@class='list-group']//li[@class='list-group-item']//ul//li//b//a")
-        #chock_a_block = self.driver.find_element_by_link_text("Chock A Block")
-        #chock_a_block.click()
-        #acct_string = driver.find_elements_by_css_selector('strong')[2].text
-        #acct_num = acct_string.split()[1]
-        #return acct_num
-        pass
+    def _start_level(self, name):
+        self.driver.find_element_by_link_text(name).click()
 
 if __name__ == '__main__':
     pass
